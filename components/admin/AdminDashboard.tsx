@@ -125,7 +125,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
             </main>
              <a
-                href="mailto:admisure215@gmail.com?subject=Feedback for VilBuzz Scoreboard"
+                href="mailto:admisure215@gmail.com?subject=Feedback for CricScore Scoreboard"
                 className="fixed bottom-5 right-5 bg-classic-blue text-white font-bold py-3 px-5 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 z-50 flex items-center gap-2"
                 target="_blank"
                 rel="noopener noreferrer"

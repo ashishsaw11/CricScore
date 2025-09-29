@@ -52,7 +52,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onAdminLogin, onViewerLogin }
 
       <div className="w-full max-w-md mx-auto">
         <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-classic-green mb-2">Welcome to VilBuzz!</h1>
+            <h1 className="text-4xl font-bold text-classic-green mb-2">Welcome to CricScore!</h1>
             <p className="text-gray-600 dark:text-gray-400">
                 This app simplifies cricket tournament management and delivers real-time live match updates.
             </p>

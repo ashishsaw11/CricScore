@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ showLogout }) => {
     <header className="bg-classic-green shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold text-white tracking-wider">
-          VilBuzz
+          CricScore
         </h1>
         <div className="flex items-center space-x-2 sm:space-x-4">
           <div className="flex items-center space-x-2 text-white">
