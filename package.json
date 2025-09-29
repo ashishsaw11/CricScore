@@ -1,0 +1,35 @@
+{
+  "name": "live-cricket-scoreboard",
+  "version": "1.0.0",
+  "description": "A real-time cricket scoreboard application with a Node.js backend.",
+  "private": true,
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build:server": "tsc -p server/tsconfig.json",
+    "build:client": "esbuild index.tsx --bundle --outfile=dist/bundle.js --format=esm --loader:.tsx=tsx --external:react --external:react-dom --external:react-dom/client",
+    "build:copy": "cp index.html dist/index.html",
+    "build": "npm run build:server && npm run build:client && npm run build:copy",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only server/src/server.ts"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "esbuild": "^0.20.2",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.4",
+    "@types/ws": "^8.5.10",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  }
+}

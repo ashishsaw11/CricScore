@@ -1,0 +1,5 @@
+{
+  "name": "Live Cricket Scoreboard",
+  "description": "A real-time cricket scoreboard application where an admin can manage and update live match scores, and viewers can watch the updates live. Features include match setup, player details, scheduling, and a live viewer count.",
+  "requestFramePermissions": []
+}

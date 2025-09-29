@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Cricket Scoreboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'classic-green': '#228B22',
+              'dark-green': '#006400',
+              'light-gray': '#f0f2f5',
+              'medium-gray': '#d1d5db',
+              'dark-gray': '#374151',
+              'white': '#ffffff',
+              'black': '#000000',
+              'classic-red': '#dc2626',
+              'classic-blue': '#2563eb',
+              'paused-yellow': '#facc15',
+              'suspended-orange': '#f97316',
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "express": "https://aistudiocdn.com/express@^5.1.0",
+    "http": "https://aistudiocdn.com/http@^0.0.1-security",
+    "process": "https://aistudiocdn.com/process@^0.11.10",
+    "cors": "https://aistudiocdn.com/cors@^2.8.5",
+    "dotenv": "https://aistudiocdn.com/dotenv@^17.2.2",
+    "mongodb": "https://aistudiocdn.com/mongodb@^6.20.0",
+    "ws": "https://aistudiocdn.com/ws@^8.18.3",
+    "path": "https://aistudiocdn.com/path@^0.12.7",
+    "url": "https://aistudiocdn.com/url@^0.11.4",
+    "esbuild": "https://aistudiocdn.com/esbuild@^0.25.10",
+    "fs/": "https://aistudiocdn.com/fs@^0.0.1-security/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-light-gray text-dark-gray dark:bg-gray-900 dark:text-gray-300 transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="/bundle.js"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
