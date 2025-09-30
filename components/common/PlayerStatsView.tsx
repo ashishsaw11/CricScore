@@ -1,5 +1,5 @@
 import React from 'react';
-import { MatchState, PlayerStats } from '../../types';
+import { MatchState, PlayerStats, Team } from '../../types';
 import { useLanguage } from '../LanguageContext';
 
 const calculateSR = (runs: number, balls: number) => {
@@ -20,12 +20,54 @@ const formatPlayerName = (player: PlayerStats) => {
     return player.name;
 };
 
+const OverHistoryView: React.FC<{ team: Team }> = ({ team }) => {
+    return (
+        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
+            <h3 className="text-lg sm:text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">Over History</h3>
+            <div className="flex flex-wrap gap-2">
+                {team.overHistory.map(over => (
+                    <div key={over.overNumber} className="flex items-center gap-1 p-2 border rounded">
+                        <span className="font-bold">{over.overNumber}:</span>
+                        {over.events.map((event, i) => (
+                            <span key={i} className="text-xs">{event}</span>
+                        ))}
+                        <span className="font-bold ml-2">({over.runs}/{over.wickets})</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const formatWicket = (player: PlayerStats, allPlayers: PlayerStats[]) => {
+    if (!player.isOut || !player.wicket) {
+        return null;
+    }
+
+    const bowler = allPlayers.find(p => p.id === player.wicket.bowlerId);
+    const bowlerName = bowler ? bowler.name : '';
+
+    switch (player.wicket.type) {
+        case 'bowled':
+            return `b ${bowlerName}`;
+        case 'caught':
+            // TODO: Implement fielder selection
+            return `c b ${bowlerName}`;
+        case 'run out':
+            // TODO: Implement fielder selection
+            return 'run out';
+        default:
+            return 'out';
+    }
+};
+
 const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
     const { t } = useLanguage();
     const { teamA, teamB, battingTeam, strikerId, nonStrikerId, bowlerId, currentOverHistory } = match;
 
     const battingTeamData = battingTeam === 'teamA' ? teamA : teamB;
     const bowlingTeamData = battingTeam === 'teamA' ? teamB : teamA;
+    const allPlayers = [...teamA.players, ...teamB.players];
 
     const BattingRow: React.FC<{ player: PlayerStats }> = ({ player }) => {
         const isStriker = player.id === strikerId;
@@ -34,7 +76,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
         
         let status = t('playerStats.yetToBat');
         if (player.isOut) {
-            status = t('playerStats.out');
+            status = formatWicket(player, allPlayers) || t('playerStats.out');
         } else if (isActive) {
             status = t('playerStats.notOut');
         } else if (player.ballsFaced > 0 || player.runs > 0) {
@@ -52,6 +94,8 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                 <td className="py-3 px-4 text-gray-600 dark:text-gray-400 text-left">{status}</td>
                 <td className="py-3 px-4 text-center font-bold text-dark-gray dark:text-white">{player.runs}</td>
                 <td className="py-3 px-4 text-center">{player.ballsFaced}</td>
+                <td className="py-3 px-4 text-center">{player.fours}</td>
+                <td className="py-3 px-4 text-center">{player.sixes}</td>
                 <td className="py-3 px-4 text-center">{calculateSR(player.runs, player.ballsFaced)}</td>
             </tr>
         );
@@ -74,6 +118,8 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                                     <th className="py-2 px-4 text-left font-semibold">{t('playerStats.status')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.runs')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.balls')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.fours')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.sixes')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.strikeRate')}</th>
                                 </tr>
                            </thead>
@@ -118,6 +164,8 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                         </table>
                     </div>
                 </div>
+
+                <OverHistoryView team={battingTeamData} />
             </div>
 
             {/* Right Column: Over History */}

@@ -34,6 +34,8 @@
         "runs": "R",
         "balls": "B",
         "strikeRate": "SR",
+        "fours": "4s",
+        "sixes": "6s",
         "bowling": "Bowling",
         "bowler": "Bowler",
         "overs": "O",

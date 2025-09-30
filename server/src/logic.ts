@@ -8,6 +8,7 @@ const initialTeamState: Omit<Team, 'name' | 'players'> = {
   wickets: 0,
   overs: 0,
   balls: 0,
+  overHistory: [],
 };
 
 const logAction = (state: AppState, action: string): AppState => {
@@ -55,7 +56,7 @@ export const getInitialState = (): AppState => {
 export const setupMatch = (state: AppState, payload: { teamAName: string; teamBName: string; scheduledTime: string; teamAPlayers: Player[]; teamBPlayers: Player[] }): AppState => {
     const { teamAName, teamBName, scheduledTime, teamAPlayers = [], teamBPlayers = [] } = payload;
     const mapToPlayerStats = (players: Player[]): PlayerStats[] => players.map(p => ({
-        ...p, runs: 0, ballsFaced: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
+        ...p, runs: 0, ballsFaced: 0, fours: 0, sixes: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
     }));
     state.match = {
         ...getInitialState().match,
@@ -88,7 +89,7 @@ export const addPlayer = (state: AppState, payload: { team: 'teamA' | 'teamB'; p
     const targetTeam = state.match[team];
     const maxId = Math.max(0, ...state.match.teamA.players.map((p: PlayerStats) => p.id), ...state.match.teamB.players.map((p: PlayerStats) => p.id));
     const newPlayer: PlayerStats = {
-        id: maxId + 1, name: playerName, nickname: nickname, runs: 0, ballsFaced: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
+        id: maxId + 1, name: playerName, nickname: nickname, runs: 0, ballsFaced: 0, fours: 0, sixes: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
     };
     targetTeam.players.push(newPlayer);
     return state;
@@ -137,6 +138,21 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     if (isBallValid) {
         currentBattingTeam.balls += 1;
         if (currentBattingTeam.balls === 6) {
+            const runsInOver = match.currentOverHistory.reduce((total, event) => {
+                if (event.startsWith('W')) return total;
+                const runs = parseInt(event.replace(/[^0-9]/g, ''));
+                return total + (isNaN(runs) ? 0 : runs);
+            }, 0);
+            const wicketsInOver = match.currentOverHistory.filter(event => event.startsWith('W')).length;
+
+            const newOver: Over = {
+                overNumber: currentBattingTeam.overs + 1,
+                runs: runsInOver,
+                wickets: wicketsInOver,
+                events: match.currentOverHistory,
+            };
+            currentBattingTeam.overHistory.push(newOver);
+
             currentBattingTeam.balls = 0;
             currentBattingTeam.overs += 1;
             [strikerId, nonStrikerId] = [nonStrikerId, strikerId];
@@ -151,7 +167,15 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
         currentBattingTeam.wickets += 1;
         eventDescription = `W`;
         const outPlayerId = batsmanOutId || strikerId;
-        currentBattingTeam.players.forEach((p: PlayerStats) => { if(p.id === outPlayerId) p.isOut = true; });
+        currentBattingTeam.players.forEach((p: PlayerStats) => { 
+            if(p.id === outPlayerId) {
+                p.isOut = true;
+                p.wicket = {
+                    bowlerId: match.bowlerId,
+                    type: wicketType,
+                };
+            }
+        });
 
         if (outPlayerId === strikerId) {
             strikerId = null;
@@ -166,7 +190,14 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
       
     currentBattingTeam.players.forEach((p: PlayerStats) => {
         if (p.id === strikerId && !wicketType) {
-            if (extra !== 'wide') { p.runs += runs; }
+            if (extra !== 'wide') { 
+                p.runs += runs; 
+                if (runs === 4) {
+                    p.fours += 1;
+                } else if (runs === 6) {
+                    p.sixes += 1;
+                }
+            }
             if (isBallValid) { p.ballsFaced += 1; }
         }
     });

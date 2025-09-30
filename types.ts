@@ -9,7 +9,10 @@ export interface PlayerStats extends Player {
     // Batting stats
     runs: number;
     ballsFaced: number;
+    fours: number;
+    sixes: number;
     isOut: boolean;
+    wicket?: Wicket;
     // Bowling stats
     oversBowled: number;
     ballsBowled: number;
@@ -25,6 +28,14 @@ export interface Team {
   wickets: number;
   overs: number;
   balls: number;
+  overHistory: Over[];
+}
+
+export interface Over {
+    overNumber: number;
+    runs: number;
+    wickets: number;
+    events: string[];
 }
 
 export enum MatchStatus {
@@ -36,6 +47,12 @@ export enum MatchStatus {
 
 export type WicketType = 'bowled' | 'caught' | 'run out';
 export type ExtraType = 'wide' | 'noball' | 'deadball';
+
+export interface Wicket {
+    bowlerId: number;
+    fielderId?: number;
+    type: WicketType;
+}
 
 
 export interface MatchState {
