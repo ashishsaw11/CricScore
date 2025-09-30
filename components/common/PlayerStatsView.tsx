@@ -1,5 +1,6 @@
 import React from 'react';
 import { MatchState, PlayerStats } from '../../types';
+import { useLanguage } from '../LanguageContext';
 
 const calculateSR = (runs: number, balls: number) => {
     if (balls === 0) return '0.00';
@@ -13,6 +14,7 @@ const calculateEcon = (runs: number, overs: number, balls: number) => {
 };
 
 const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
+    const { t } = useLanguage();
     const { teamA, teamB, battingTeam, strikerId, nonStrikerId, bowlerId, currentOverHistory } = match;
 
     const battingTeamData = battingTeam === 'teamA' ? teamA : teamB;
@@ -23,13 +25,13 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
         const isNonStriker = player.id === nonStrikerId;
         const isActive = isStriker || isNonStriker;
         
-        let status = "Yet to Bat";
+        let status = t('playerStats.yetToBat');
         if (player.isOut) {
-            status = "Out";
+            status = t('playerStats.out');
         } else if (isActive) {
-            status = "Not Out";
+            status = t('playerStats.notOut');
         } else if (player.ballsFaced > 0 || player.runs > 0) {
-             status = "Not Out";
+             status = t('playerStats.notOut');
         }
 
         const shouldDisplay = isActive || player.isOut || player.ballsFaced > 0;
@@ -56,16 +58,16 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
             <div className="lg:col-span-2 space-y-8">
                 {/* Batting Scorecard */}
                 <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
-                    <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{battingTeamData.name} - Batting</h3>
+                    <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{battingTeamData.name} - {t('playerStats.batting')}</h3>
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                            <thead>
                                 <tr className="text-xs uppercase text-gray-500 dark:text-gray-400">
-                                    <th className="py-2 px-4 text-left font-semibold">Batsman</th>
-                                    <th className="py-2 px-4 text-left font-semibold">Status</th>
-                                    <th className="py-2 px-4 text-center font-semibold">R</th>
-                                    <th className="py-2 px-4 text-center font-semibold">B</th>
-                                    <th className="py-2 px-4 text-center font-semibold">SR</th>
+                                    <th className="py-2 px-4 text-left font-semibold">{t('playerStats.batsman')}</th>
+                                    <th className="py-2 px-4 text-left font-semibold">{t('playerStats.status')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.runs')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.balls')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.strikeRate')}</th>
                                 </tr>
                            </thead>
                             <tbody>
@@ -77,16 +79,16 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
 
                 {/* Bowling Scorecard */}
                 <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
-                    <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{bowlingTeamData.name} - Bowling</h3>
+                    <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{bowlingTeamData.name} - {t('playerStats.bowling')}</h3>
                      <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                              <thead>
                                 <tr className="text-xs uppercase text-gray-500 dark:text-gray-400">
-                                    <th className="py-2 px-4 text-left font-semibold">Bowler</th>
-                                    <th className="py-2 px-4 text-center font-semibold">O</th>
-                                    <th className="py-2 px-4 text-center font-semibold">R</th>
-                                    <th className="py-2 px-4 text-center font-semibold">W</th>
-                                    <th className="py-2 px-4 text-center font-semibold">Econ</th>
+                                    <th className="py-2 px-4 text-left font-semibold">{t('playerStats.bowler')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.overs')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.runs')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.wickets')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">{t('playerStats.economy')}</th>
                                 </tr>
                            </thead>
                             <tbody>
@@ -102,7 +104,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                                     </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={5} className="py-4 text-center text-gray-500 dark:text-gray-400">No bowlers yet.</td>
+                                    <td colSpan={5} className="py-4 text-center text-gray-500 dark:text-gray-400">{t('playerStats.noBowlersYet')}</td>
                                 </tr>
                             )}
                             </tbody>
@@ -113,7 +115,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
 
             {/* Right Column: Over History */}
             <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700 self-start">
-                <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">This Over</h3>
+                <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{t('playerStats.thisOver')}</h3>
                 {currentOverHistory.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {currentOverHistory.map((event, i) => {
@@ -136,7 +138,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                     })}
                   </div>
                 ) : (
-                  <p className="text-gray-500 dark:text-gray-400">Waiting for the first ball...</p>
+                  <p className="text-gray-500 dark:text-gray-400">{t('playerStats.waitingForFirstBall')}</p>
                 )}
               </div>
         </div>

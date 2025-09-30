@@ -3,6 +3,7 @@ import { AppContext } from '../App';
 import { UsersIcon } from './icons/UsersIcon';
 import * as client from '../websocket-client';
 import { HistoryIcon } from './icons/HistoryIcon';
+import { useLanguage } from './LanguageContext';
 
 interface HeaderProps {
     showLogout: boolean;
@@ -24,6 +25,7 @@ const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const Header: React.FC<HeaderProps> = ({ showLogout }) => {
   const { serverState, logout, userRole, toggleHistoryModal } = useContext(AppContext);
   const { viewerCount, theme } = serverState;
+  const { language, setLanguage } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -43,6 +45,16 @@ const Header: React.FC<HeaderProps> = ({ showLogout }) => {
           <div className="flex items-center space-x-2 text-white">
             <UsersIcon className="w-6 h-6 text-white" />
             <span className="font-semibold text-lg">{viewerCount}</span>
+          </div>
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as 'en' | 'hi')}
+              className="bg-white text-gray-800 rounded-md p-2 h-10"
+            >
+              <option value="en">English</option>
+              <option value="hi">हिंदी</option>
+            </select>
           </div>
            <button
             onClick={handleToggleTheme}

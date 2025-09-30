@@ -100,6 +100,8 @@ export const updatePlayerSelection = (state: AppState, payload: { strikerId?: nu
 };
 
 export const recordBall = (state: AppState, payload: { runs: number; extra?: ExtraType; wicketType?: WicketType }): AppState => {
+    try {
+        console.log('recordBall payload:', payload);
     const { runs, extra, wicketType } = payload;
     const { match } = state;
 
@@ -157,13 +159,13 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     }
       
     currentBattingTeam.players.forEach((p: PlayerStats) => {
-        if (p.id === match.strikerId && !wicketType) {
+        if (p.id === strikerId && !wicketType) {
             if (extra !== 'wide') { p.runs += runs; }
             if (isBallValid) { p.ballsFaced += 1; }
         }
     });
     currentBowlingTeam.players.forEach((p: PlayerStats) => {
-        if (p.id === match.bowlerId) {
+        if (p.id === bowlerId) {
             p.runsConceded += scoreToAdd;
             if (wicketType && wicketType !== 'run out') { p.wicketsTaken += 1; }
             if (isBallValid) {
@@ -195,6 +197,10 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     state.match.nonStrikerId = nonStrikerId;
     state.match.bowlerId = bowlerId;
     return state;
+    } catch (error) {
+        console.error('Error in recordBall:', error);
+        return state; // Return the original state to prevent a crash
+    }
 };
 
 export const switchSides = (state: AppState): AppState => {

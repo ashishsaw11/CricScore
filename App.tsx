@@ -9,6 +9,7 @@ import { getInitialState } from './initialState';
 import ConnectionStatusBanner from './components/ConnectionStatusBanner';
 import Modal from './components/common/Modal';
 import { openMatchStateInNewTab } from './components/common/csvExporter';
+import { LanguageProvider } from './components/LanguageContext';
 
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'error';
@@ -166,15 +167,17 @@ const App: React.FC = () => {
   const isBannerVisible = connectionStatus !== 'connected';
 
   return (
-    <AppContext.Provider value={{ serverState, connectionStatus, userRole, viewerDetails, logout: handleLogout, isHistoryModalOpen, toggleHistoryModal }}>
-        <div className={`min-h-screen transition-all duration-300 ${isBannerVisible ? 'pt-9' : ''}`}>
-            <ConnectionStatusBanner />
-            <ErrorBoundary>
-              {renderAppContent()}
-            </ErrorBoundary>
-            {userRole === 'viewer' && <MatchHistoryModal />}
-        </div>
-    </AppContext.Provider>
+    <LanguageProvider>
+      <AppContext.Provider value={{ serverState, connectionStatus, userRole, viewerDetails, logout: handleLogout, isHistoryModalOpen, toggleHistoryModal }}>
+          <div className={`min-h-screen transition-all duration-300 ${isBannerVisible ? 'pt-9' : ''}`}>
+              <ConnectionStatusBanner />
+              <ErrorBoundary>
+                {renderAppContent()}
+              </ErrorBoundary>
+              {userRole === 'viewer' && <MatchHistoryModal />}
+          </div>
+      </AppContext.Provider>
+    </LanguageProvider>
   );
 };
 

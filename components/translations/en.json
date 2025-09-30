@@ -1,0 +1,46 @@
+{
+    "viewerScoreboard": {
+        "target": "Target:",
+        "need": "Need",
+        "runsToWinFrom": "runs to win from",
+        "balls": "balls",
+        "sendFeedback": "Send Feedback"
+    },
+    "scoreboard": {
+        "matchPaused": "Match Paused",
+        "matchSuspended": "Match Suspended",
+        "matchFinished": "Match Finished",
+        "matchNotScheduled": "Match not scheduled yet.",
+        "matchStartsAt": "Match starts at",
+        "on": "on",
+        "needRunsInBalls": "need {{runsNeeded}} runs in {{totalBallsRemaining}} balls.",
+        "wonTossChoseTo": "{{winnerName}} won the toss and chose to {{choseTo}}.",
+        "isBatting": "{{battingTeamName}} is batting",
+        "vs": "VS",
+        "batting": "Batting",
+        "runRate": "Run Rate",
+        "target": "Target",
+        "striker": "Striker",
+        "nonStriker": "Non-Striker",
+        "bowler": "Bowler"
+    },
+    "playerStats": {
+        "yetToBat": "Yet to Bat",
+        "out": "Out",
+        "notOut": "Not Out",
+        "batting": "Batting",
+        "batsman": "Batsman",
+        "status": "Status",
+        "runs": "R",
+        "balls": "B",
+        "strikeRate": "SR",
+        "bowling": "Bowling",
+        "bowler": "Bowler",
+        "overs": "O",
+        "wickets": "W",
+        "economy": "Econ",
+        "noBowlersYet": "No bowlers yet.",
+        "thisOver": "This Over",
+        "waitingForFirstBall": "Waiting for the first ball..."
+    }
+}

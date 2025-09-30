@@ -1,0 +1,46 @@
+{
+    "viewerScoreboard": {
+        "target": "लक्ष्य:",
+        "need": "चाहिए",
+        "runsToWinFrom": "रन जीतने के लिए",
+        "balls": "गेंदे",
+        "sendFeedback": "प्रतिक्रिया भेजें"
+    },
+    "scoreboard": {
+        "matchPaused": "मैच रुका हुआ है",
+        "matchSuspended": "मैच निलंबित है",
+        "matchFinished": "मैच समाप्त",
+        "matchNotScheduled": "मैच अभी निर्धारित नहीं है।",
+        "matchStartsAt": "मैच",
+        "on": "को",
+        "needRunsInBalls": "को {{totalBallsRemaining}} गेंदों में {{runsNeeded}} रन चाहिए।",
+        "wonTossChoseTo": "{{winnerName}} ने टॉस जीता और {{choseTo}} चुना।",
+        "isBatting": "{{battingTeamName}} बल्लेबाजी कर रहा है",
+        "vs": "बनाम",
+        "batting": "बल्लेबाजी",
+        "runRate": "रन रेट",
+        "target": "लक्ष्य",
+        "striker": "स्ट्राइकर",
+        "nonStriker": "नॉन-स्ट्राइकर",
+        "bowler": "गेंदबाज"
+    },
+    "playerStats": {
+        "yetToBat": "बल्लेबाजी बाकी है",
+        "out": "आउट",
+        "notOut": "नॉट आउट",
+        "batting": "बल्लेबाजी",
+        "batsman": "बल्लेबाज",
+        "status": "स्थिति",
+        "runs": "रन",
+        "balls": "गेंदे",
+        "strikeRate": "स्ट्राइक रेट",
+        "bowling": "गेंदबाजी",
+        "bowler": "गेंदबाज",
+        "overs": "ओवर",
+        "wickets": "विकेट",
+        "economy": "इकोनॉमी",
+        "noBowlersYet": "अभी तक कोई गेंदबाज नहीं है।",
+        "thisOver": "यह ओवर",
+        "waitingForFirstBall": "पहली गेंद का इंतजार है..."
+    }
+}

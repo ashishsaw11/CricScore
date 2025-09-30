@@ -22,9 +22,28 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
+const interval = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+        const userWs = ws as UserWebSocket;
+        if (userWs.isAlive === false) return userWs.terminate();
+
+        userWs.isAlive = false;
+        userWs.ping(() => {});
+    });
+}, 30000);
+
+wss.on('close', function close() {
+    clearInterval(interval);
+});
+
 // Serve all static assets (index.html, bundle.js) from the 'dist' directory.
 app.use(express.static(__dirname));
 
+
+interface UserWebSocket extends WebSocket {
+    role: 'admin' | 'viewer' | 'unknown';
+    isAlive: boolean;
+}
 
 // Define a type for the singleton app state document to handle the string _id
 interface AppStateSingleton extends Omit<AppState, 'matchHistory'> {
@@ -34,7 +53,7 @@ interface AppStateSingleton extends Omit<AppState, 'matchHistory'> {
 let state: AppState = getInitialState();
 // Simple undo buffer for one previous state
 let undoState: AppState | null = null;
-const clients = new Set<WebSocket>();
+const clients = new Set<UserWebSocket>();
 
 const saveStateToDB = async (currentState: AppState) => {
     try {
@@ -82,6 +101,11 @@ const loadStateFromDB = async () => {
         console.error('Failed to load state from DB. Using initial state.', error);
         state = getInitialState();
     }
+};
+
+const updateViewerCount = () => {
+    const viewerCount = Array.from(clients).filter(c => c.role === 'viewer').length;
+    state.viewerCount = viewerCount;
 };
 
 const broadcastState = () => {
@@ -141,20 +165,34 @@ const reloadHistory = async (): Promise<MatchState[]> => {
 }
 
 
-wss.on('connection', (ws) => {
-    clients.add(ws);
-    state.viewerCount = clients.size;
+wss.on('connection', (ws: WebSocket) => {
+    const userWs = ws as UserWebSocket;
+    userWs.role = 'unknown';
+    userWs.isAlive = true;
+    userWs.on('pong', () => {
+        userWs.isAlive = true;
+    });
+    clients.add(userWs);
+    updateViewerCount();
     broadcastState(); // Send current state to new client and update viewer count for others
 
-    ws.on('message', async (message) => {
+    userWs.on('message', async (message) => {
         try {
             const { type, payload } = JSON.parse(message.toString());
             let newState: AppState = JSON.parse(JSON.stringify(state)); // Deep copy current state
 
             switch (type) {
                 case 'login':
+                    if (payload.role === 'admin' || payload.role === 'viewer') {
+                        userWs.role = payload.role;
+                        updateViewerCount();
+                        broadcastState();
+                    }
+                    break;
                 case 'logout':
-                    // Just broadcasting viewer count is handled by connection/close
+                    userWs.role = 'unknown';
+                    updateViewerCount();
+                    broadcastState();
                     break;
                 case 'toggleTheme':
                     newState = toggleTheme(newState);
@@ -245,9 +283,9 @@ wss.on('connection', (ws) => {
         }
     });
 
-    ws.on('close', () => {
-        clients.delete(ws);
-        state.viewerCount = clients.size;
+    userWs.on('close', () => {
+        clients.delete(userWs);
+        updateViewerCount();
         broadcastState(); // Update viewer count for remaining clients
     });
 

@@ -4,6 +4,7 @@ import Header from '../Header';
 import Scoreboard from '../Scoreboard';
 import { MatchStatus } from '../../types';
 import PlayerStatsView from '../common/PlayerStatsView';
+import { useLanguage } from '../LanguageContext';
 
 const EmailIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -15,6 +16,7 @@ const EmailIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const ViewerScoreboard: React.FC = () => {
   const { serverState } = useContext(AppContext);
   const { match } = serverState;
+  const { t } = useLanguage();
   const battingTeamData = match.battingTeam === 'teamA' ? match.teamA : match.teamB;
 
   const runsNeeded = match.targetScore - battingTeamData.score;
@@ -34,12 +36,12 @@ const ViewerScoreboard: React.FC = () => {
                     {match.currentInning === 2 && match.targetScore > 0 && (
                         <div className="mb-8 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border border-medium-gray dark:border-gray-700 text-center">
                             <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200">
-                                Target: <span className="text-classic-blue">{match.targetScore}</span>
+                                {t('viewerScoreboard.target')} <span className="text-classic-blue">{match.targetScore}</span>
                             </h3>
                             <p className="text-lg text-gray-700 dark:text-gray-300 mt-1">
-                                Need <span className="font-bold">{runsNeeded > 0 ? runsNeeded : 0}</span> runs to win
+                                {t('viewerScoreboard.need')} <span className="font-bold">{runsNeeded > 0 ? runsNeeded : 0}</span> {t('viewerScoreboard.runsToWinFrom')}
                                 from <span
-                                className="font-bold">{ballsRemaining > 0 ? ballsRemaining : 0}</span> balls
+                                className="font-bold">{ballsRemaining > 0 ? ballsRemaining : 0}</span> {t('viewerScoreboard.balls')}
                             </p>
                         </div>
                     )}
@@ -53,10 +55,10 @@ const ViewerScoreboard: React.FC = () => {
             className="fixed bottom-5 right-5 bg-classic-blue text-white font-bold py-3 px-5 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 z-50 flex items-center gap-2"
             target="_blank"
             rel="noopener noreferrer"
-            title="Send Feedback"
+            title={t('viewerScoreboard.sendFeedback')}
         >
             <EmailIcon className="w-5 h-5" />
-            <span className="hidden sm:inline">Send Feedback</span>
+            <span className="hidden sm:inline">{t('viewerScoreboard.sendFeedback')}</span>
         </a>
     </div>
   );

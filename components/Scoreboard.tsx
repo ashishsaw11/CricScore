@@ -1,11 +1,13 @@
 import React from 'react';
 import { MatchState, MatchStatus } from '../types';
+import { useLanguage } from './LanguageContext';
 
 interface ScoreboardProps {
   match: MatchState;
 }
 
 const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
+  const { t } = useLanguage();
   const { teamA, teamB, battingTeam, status, scheduledTime, tossWinner, choseTo, totalOvers, strikerId, nonStrikerId, bowlerId, targetScore, currentInning, resultMessage, isPaused } = match;
 
   const battingTeamData = battingTeam === 'teamA' ? teamA : teamB;
@@ -26,34 +28,34 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
   
   const getMatchStatus = () => {
     if (isPaused) {
-        return { message: "Match Paused", color: "text-paused-yellow" };
+        return { message: t('scoreboard.matchPaused'), color: "text-paused-yellow" };
     }
     if (status === MatchStatus.SUSPENDED) {
-      return { message: "Match Suspended", color: "text-suspended-orange" };
+      return { message: t('scoreboard.matchSuspended'), color: "text-suspended-orange" };
     }
     if (status === MatchStatus.FINISHED) {
-        return { message: resultMessage || "Match Finished", color: "text-classic-blue" };
+        return { message: resultMessage || t('scoreboard.matchFinished'), color: "text-classic-blue" };
     }
     if (status === MatchStatus.NOT_STARTED) {
         const date = new Date(scheduledTime);
-        if(!scheduledTime) return { message: 'Match not scheduled yet.', color: "text-gray-600 dark:text-gray-400" };
-        return { message: `Match starts at ${date.toLocaleTimeString()} on ${date.toLocaleDateString()}`, color: "text-gray-600 dark:text-gray-400" };
+        if(!scheduledTime) return { message: t('scoreboard.matchNotScheduled'), color: "text-gray-600 dark:text-gray-400" };
+        return { message: `${t('scoreboard.matchStartsAt')} ${date.toLocaleTimeString()} ${t('scoreboard.on')} ${date.toLocaleDateString()}`, color: "text-gray-600 dark:text-gray-400" };
     }
     
     if (currentInning === 2) {
         const runsNeeded = targetScore - battingTeamData.score;
         const totalBallsRemaining = (totalOvers * 6) - (battingTeamData.overs * 6 + battingTeamData.balls);
         if (runsNeeded > 0 && totalBallsRemaining > 0) {
-          return { message: `${battingTeamData.name} need ${runsNeeded} runs in ${totalBallsRemaining} balls.`, color: "text-dark-green dark:text-green-400" };
+          return { message: `${battingTeamData.name} ${t('scoreboard.needRunsInBalls', { runsNeeded, totalBallsRemaining })}`, color: "text-dark-green dark:text-green-400" };
         }
     }
 
     if (tossWinner && status !== 'In Progress') {
         const winnerName = tossWinner === 'teamA' ? teamA.name : teamB.name;
-        return { message: `${winnerName} won the toss and chose to ${choseTo}.`, color: "text-gray-600 dark:text-gray-400" };
+        return { message: t('scoreboard.wonTossChoseTo', { winnerName, choseTo }), color: "text-gray-600 dark:text-gray-400" };
     }
 
-    return { message: `${battingTeamData.name} is batting`, color: "text-dark-green dark:text-green-400" };
+    return { message: t('scoreboard.isBatting', { battingTeamName: battingTeamData.name }), color: "text-dark-green dark:text-green-400" };
   }
 
   const { message, color } = getMatchStatus();
@@ -79,7 +81,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
         
         {/* VS */}
         <div className="text-4xl font-bold text-gray-400 dark:text-gray-500">
-          VS
+          {t('scoreboard.vs')}
         </div>
 
         {/* Team B */}
@@ -98,29 +100,29 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
         <>
             <div className="mt-6 pt-4 border-t border-medium-gray dark:border-gray-700 flex justify-around text-center">
                 <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Batting</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.batting')}</p>
                     <p className="font-bold text-lg text-dark-gray dark:text-gray-200">{battingTeamData.name}</p>
                 </div>
                 <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Run Rate</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.runRate')}</p>
                     <p className="font-bold text-lg text-classic-green">{calculateRunRate(battingTeamData.score, battingTeamData.overs, battingTeamData.balls)}</p>
                 </div>
                 {targetScore > 0 && <div>
-                     <p className="text-sm text-gray-500 dark:text-gray-400">Target</p>
+                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.target')}</p>
                     <p className="font-bold text-lg text-classic-blue">{targetScore}</p>
                 </div>}
             </div>
              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-around text-center">
                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Striker</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.striker')}</p>
                     <p className="font-bold text-md text-dark-gray dark:text-gray-200">{striker ? striker.name : 'N/A'}*</p>
                 </div>
                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Non-Striker</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.nonStriker')}</p>
                     <p className="font-bold text-md text-dark-gray dark:text-gray-200">{nonStriker ? nonStriker.name : 'N/A'}</p>
                 </div>
                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Bowler</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.bowler')}</p>
                     <p className="font-bold text-md text-dark-gray dark:text-gray-200">{bowler ? bowler.name : 'N/A'}</p>
                 </div>
             </div>
