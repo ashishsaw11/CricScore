@@ -4,6 +4,8 @@ import { UsersIcon } from './icons/UsersIcon';
 import * as client from '../websocket-client';
 import { HistoryIcon } from './icons/HistoryIcon';
 import { useLanguage } from './LanguageContext';
+import DropdownMenu from './common/DropdownMenu';
+import { CogIcon } from './icons/CogIcon';
 
 interface HeaderProps {
     showLogout: boolean;
@@ -42,38 +44,79 @@ const Header: React.FC<HeaderProps> = ({ showLogout }) => {
           CricScore
         </h1>
         <div className="flex items-center space-x-2 sm:space-x-4">
+          {/* Viewer Count */}
           <div className="flex items-center space-x-2 text-white">
             <UsersIcon className="w-6 h-6 text-white" />
             <span className="font-semibold text-lg">{viewerCount}</span>
           </div>
-          <div className="relative">
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as 'en' | 'hi')}
-              className="bg-white text-gray-800 rounded-md p-2 h-10"
-            >
-              <option value="en">English</option>
-              <option value="hi">हिंदी</option>
-            </select>
-          </div>
-           <button
-            onClick={handleToggleTheme}
-            className="text-white p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
-            aria-label="Toggle theme"
-          >
-            {theme === 'light' ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
-          </button>
 
-          {userRole === 'viewer' && (
-              <button
-                  onClick={toggleHistoryModal}
-                  className="text-white p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
-                  aria-label="View match history"
-                  title="View match history"
+          {/* Desktop Menu */}
+          <div className="hidden sm:flex items-center space-x-2">
+            <div className="relative">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as 'en' | 'hi')}
+                className="bg-white text-gray-800 rounded-md p-2 h-10"
               >
-                  <HistoryIcon className="w-6 h-6" />
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+              </select>
+            </div>
+            <button
+              onClick={handleToggleTheme}
+              className="text-white p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
+            </button>
+            {userRole === 'viewer' && (
+              <button
+                onClick={toggleHistoryModal}
+                className="text-white p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+                aria-label="View match history"
+                title="View match history"
+              >
+                <HistoryIcon className="w-6 h-6" />
               </button>
-          )}
+            )}
+          </div>
+
+          {/* Mobile Menu */}
+          <div className="sm:hidden">
+            <DropdownMenu buttonContent={<CogIcon className="w-6 h-6 text-white" />}>
+              <div className="p-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Language</label>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as 'en' | 'hi')}
+                  className="w-full bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 border border-medium-gray rounded-md p-2"
+                >
+                  <option value="en">English</option>
+                  <option value="hi">हिंदी</option>
+                </select>
+              </div>
+              <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={handleToggleTheme}
+                  className="w-full flex justify-between items-center text-gray-700 dark:text-gray-300"
+                >
+                  <span>Toggle Theme</span>
+                  {theme === 'light' ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
+                </button>
+              </div>
+              {userRole === 'viewer' && (
+                <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    onClick={toggleHistoryModal}
+                    className="w-full flex justify-between items-center text-gray-700 dark:text-gray-300"
+                  >
+                    <span>Match History</span>
+                    <HistoryIcon className="w-6 h-6" />
+                  </button>
+                </div>
+              )}
+            </DropdownMenu>
+          </div>
 
           {showLogout && (
              <button
