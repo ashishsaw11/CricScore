@@ -8,11 +8,13 @@ const AddPlayerInput: React.FC<{
   teamName: string;
 }> = ({ team, teamName }) => {
   const [playerName, setPlayerName] = useState('');
+  const [playerNickname, setPlayerNickname] = useState('');
 
   const handleAddPlayer = () => {
     if (playerName.trim()) {
-      client.addPlayer({ team, playerName: playerName.trim() });
+      client.addPlayer({ team, playerName: playerName.trim(), nickname: playerNickname.trim() });
       setPlayerName('');
+      setPlayerNickname('');
     }
   };
 
@@ -23,6 +25,13 @@ const AddPlayerInput: React.FC<{
         value={playerName}
         onChange={(e) => setPlayerName(e.target.value)}
         placeholder={`New player for ${teamName}`}
+        className="flex-grow px-3 py-2 bg-white dark:bg-gray-700 border border-medium-gray dark:border-gray-600 rounded-md text-dark-gray dark:text-gray-200 focus:ring-2 focus:ring-classic-green focus:outline-none"
+      />
+      <input
+        type="text"
+        value={playerNickname}
+        onChange={(e) => setPlayerNickname(e.target.value)}
+        placeholder="Nickname (optional)"
         className="flex-grow px-3 py-2 bg-white dark:bg-gray-700 border border-medium-gray dark:border-gray-600 rounded-md text-dark-gray dark:text-gray-200 focus:ring-2 focus:ring-classic-green focus:outline-none"
       />
       <button

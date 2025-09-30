@@ -83,12 +83,12 @@ export const startMatch = (state: AppState, payload: { tossWinner: 'teamA' | 'te
     return state;
 };
 
-export const addPlayer = (state: AppState, payload: { team: 'teamA' | 'teamB'; playerName: string }): AppState => {
-    const { team, playerName } = payload;
+export const addPlayer = (state: AppState, payload: { team: 'teamA' | 'teamB'; playerName: string; nickname?: string }): AppState => {
+    const { team, playerName, nickname } = payload;
     const targetTeam = state.match[team];
     const maxId = Math.max(0, ...state.match.teamA.players.map((p: PlayerStats) => p.id), ...state.match.teamB.players.map((p: PlayerStats) => p.id));
     const newPlayer: PlayerStats = {
-        id: maxId + 1, name: playerName, runs: 0, ballsFaced: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
+        id: maxId + 1, name: playerName, nickname: nickname, runs: 0, ballsFaced: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
     };
     targetTeam.players.push(newPlayer);
     return state;
@@ -99,10 +99,10 @@ export const updatePlayerSelection = (state: AppState, payload: { strikerId?: nu
     return state;
 };
 
-export const recordBall = (state: AppState, payload: { runs: number; extra?: ExtraType; wicketType?: WicketType }): AppState => {
+export const recordBall = (state: AppState, payload: { runs: number; extra?: ExtraType; wicketType?: WicketType; batsmanOutId?: number }): AppState => {
     try {
         console.log('recordBall payload:', payload);
-    const { runs, extra, wicketType } = payload;
+    const { runs, extra, wicketType, batsmanOutId } = payload;
     const { match } = state;
 
     if (match.isPaused) return state; // Do not record ball if paused
@@ -149,9 +149,14 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     if (wicketType) {
         currentBattingTeam.wickets += 1;
         eventDescription = `W`;
-        const outPlayerId = match.strikerId;
+        const outPlayerId = batsmanOutId || strikerId;
         currentBattingTeam.players.forEach((p: PlayerStats) => { if(p.id === outPlayerId) p.isOut = true; });
-        strikerId = null; // New batsman needed
+
+        if (outPlayerId === strikerId) {
+            strikerId = null;
+        } else {
+            nonStrikerId = null;
+        }
     }
 
     if(!overJustEnded) {

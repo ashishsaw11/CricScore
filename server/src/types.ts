@@ -1,6 +1,7 @@
 export interface Player {
   id: number;
   name: string;
+  nickname?: string;
 }
 
 export interface PlayerStats extends Player {

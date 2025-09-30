@@ -1,10 +1,17 @@
 import React from 'react';
-import { MatchState, MatchStatus } from '../types';
+import { MatchState, MatchStatus, PlayerStats } from '../types';
 import { useLanguage } from './LanguageContext';
 
 interface ScoreboardProps {
   match: MatchState;
 }
+
+const formatPlayerName = (player: PlayerStats) => {
+    if (player.nickname) {
+        return `${player.name} (${player.nickname})`;
+    }
+    return player.name;
+};
 
 const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
   const { t } = useLanguage();
@@ -115,15 +122,15 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-around text-center">
                  <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.striker')}</p>
-                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{striker ? striker.name : 'N/A'}*</p>
+                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{striker ? formatPlayerName(striker) : 'N/A'}*</p>
                 </div>
                  <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.nonStriker')}</p>
-                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{nonStriker ? nonStriker.name : 'N/A'}</p>
+                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{nonStriker ? formatPlayerName(nonStriker) : 'N/A'}</p>
                 </div>
                  <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.bowler')}</p>
-                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{bowler ? bowler.name : 'N/A'}</p>
+                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{bowler ? formatPlayerName(bowler) : 'N/A'}</p>
                 </div>
             </div>
         </>

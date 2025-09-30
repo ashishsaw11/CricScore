@@ -13,6 +13,13 @@ const calculateEcon = (runs: number, overs: number, balls: number) => {
     return ((runs / totalBalls) * 6).toFixed(2);
 };
 
+const formatPlayerName = (player: PlayerStats) => {
+    if (player.nickname) {
+        return `${player.name} (${player.nickname})`;
+    }
+    return player.name;
+};
+
 const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
     const { t } = useLanguage();
     const { teamA, teamB, battingTeam, strikerId, nonStrikerId, bowlerId, currentOverHistory } = match;
@@ -40,7 +47,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
         return (
             <tr className={`border-b border-gray-200 dark:border-gray-700 ${isActive ? 'bg-green-50 dark:bg-gray-700/50' : ''}`}>
                 <td className="py-3 px-4 text-dark-gray dark:text-gray-200 font-medium">
-                    {player.name}{isStriker ? '*' : ''}
+                    {formatPlayerName(player)}{isStriker ? '*' : ''}
                 </td>
                 <td className="py-3 px-4 text-gray-600 dark:text-gray-400 text-left">{status}</td>
                 <td className="py-3 px-4 text-center font-bold text-dark-gray dark:text-white">{player.runs}</td>
@@ -95,7 +102,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                             {bowlers.length > 0 ? bowlers.map(p => (
                                     <tr key={p.id} className={`border-b border-gray-200 dark:border-gray-700 ${p.id === bowlerId ? 'bg-green-50 dark:bg-gray-700/50' : ''}`}>
                                         <td className="py-3 px-4 text-dark-gray dark:text-gray-200 font-medium">
-                                            {p.name}{p.id === bowlerId ? '*' : ''}
+                                            {formatPlayerName(p)}{p.id === bowlerId ? '*' : ''}
                                         </td>
                                         <td className="text-center">{p.oversBowled}.{p.ballsBowled}</td>
                                         <td className="text-center">{p.runsConceded}</td>
