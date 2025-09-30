@@ -65,7 +65,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
             <div className="lg:col-span-2 space-y-8">
                 {/* Batting Scorecard */}
                 <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
-                    <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{battingTeamData.name} - {t('playerStats.batting')}</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{battingTeamData.name} - {t('playerStats.batting')}</h3>
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                            <thead>
@@ -86,7 +86,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
 
                 {/* Bowling Scorecard */}
                 <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
-                    <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{bowlingTeamData.name} - {t('playerStats.bowling')}</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{bowlingTeamData.name} - {t('playerStats.bowling')}</h3>
                      <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                              <thead>
@@ -122,7 +122,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
 
             {/* Right Column: Over History */}
             <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700 self-start">
-                <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{t('playerStats.thisOver')}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{t('playerStats.thisOver')}</h3>
                 {currentOverHistory.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {currentOverHistory.map((event, i) => {
@@ -137,7 +137,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                       return (
                         <span 
                           key={i} 
-                          className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-sm shadow-sm ${bgColor}`}
+                          className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full font-bold text-xs sm:text-sm shadow-sm ${bgColor}`}
                         >
                           {event}
                         </span>

@@ -19,7 +19,7 @@ const AddPlayerInput: React.FC<{
   };
 
   return (
-    <div className="flex gap-2 mt-2">
+    <div className="flex flex-col sm:flex-row gap-2 mt-2">
       <input
         type="text"
         value={playerName}
@@ -346,7 +346,7 @@ const ScoreUpdater: React.FC = () => {
          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
              <div className="mb-4">
                 <h3 className="text-xl font-bold text-dark-gray dark:text-gray-200 mb-2 text-center">Live Scoring</h3>
-                <div className="grid grid-cols-3 text-center gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 text-center gap-2">
                     <div>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Striker</p>
                         <p className="font-bold">{striker?.name}*</p>
@@ -374,7 +374,7 @@ const ScoreUpdater: React.FC = () => {
                     <h4 className="font-semibold text-center mb-2 text-gray-600 dark:text-gray-400">
                         {isNoBallMode ? 'Runs off bat (+1 for No-Ball penalty)' : 'Runs'}
                     </h4>
-                    <div className="grid grid-cols-7 gap-2">
+                    <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
                         {[0, 1, 2, 3, 4, 5, 6].map(run => (
                             <button 
                                 key={run} 

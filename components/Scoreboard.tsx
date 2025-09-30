@@ -69,35 +69,35 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
   const isTeamHighlightActive = status === MatchStatus.IN_PROGRESS && !isPaused;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-medium-gray dark:border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 border border-medium-gray dark:border-gray-700">
       <div className="text-center mb-4">
-        <p className={`font-bold text-lg ${color}`}>{message}</p>
+        <p className={`font-bold text-base sm:text-lg ${color}`}>{message}</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center text-center">
         {/* Team A */}
-        <div className={`p-4 rounded-lg transition-colors ${battingTeam === 'teamA' && isTeamHighlightActive ? 'bg-green-100 dark:bg-gray-700 border border-green-200 dark:border-gray-600' : ''}`}>
-          <h2 className="text-2xl font-bold text-dark-gray dark:text-gray-200">{teamA.name}</h2>
-          <p className="text-3xl sm:text-4xl font-extrabold text-black dark:text-white my-2">
+        <div className={`p-2 sm:p-4 rounded-lg transition-colors ${battingTeam === 'teamA' && isTeamHighlightActive ? 'bg-green-100 dark:bg-gray-700 border border-green-200 dark:border-gray-600' : ''}`}>
+          <h2 className="text-xl sm:text-2xl font-bold text-dark-gray dark:text-gray-200">{teamA.name}</h2>
+          <p className="text-2xl sm:text-4xl font-extrabold text-black dark:text-white my-1 sm:my-2">
             {teamA.score} - {teamA.wickets}
           </p>
-          <p className="text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium">
             ({formatOvers(teamA.overs, teamA.balls)} / {totalOvers > 0 ? totalOvers : 'N/A'})
           </p>
         </div>
         
         {/* VS */}
-        <div className="text-4xl font-bold text-gray-400 dark:text-gray-500">
+        <div className="text-2xl sm:text-4xl font-bold text-gray-400 dark:text-gray-500 my-2 sm:my-0">
           {t('scoreboard.vs')}
         </div>
 
         {/* Team B */}
-        <div className={`p-4 rounded-lg transition-colors ${battingTeam === 'teamB' && isTeamHighlightActive ? 'bg-green-100 dark:bg-gray-700 border border-green-200 dark:border-gray-600' : ''}`}>
-          <h2 className="text-2xl font-bold text-dark-gray dark:text-gray-200">{teamB.name}</h2>
-           <p className="text-3xl sm:text-4xl font-extrabold text-black dark:text-white my-2">
+        <div className={`p-2 sm:p-4 rounded-lg transition-colors ${battingTeam === 'teamB' && isTeamHighlightActive ? 'bg-green-100 dark:bg-gray-700 border border-green-200 dark:border-gray-600' : ''}`}>
+          <h2 className="text-xl sm:text-2xl font-bold text-dark-gray dark:text-gray-200">{teamB.name}</h2>
+           <p className="text-2xl sm:text-4xl font-extrabold text-black dark:text-white my-1 sm:my-2">
             {teamB.score} - {teamB.wickets}
           </p>
-          <p className="text-gray-600 dark:text-gray-400 font-medium">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium">
             ({formatOvers(teamB.overs, teamB.balls)} / {totalOvers > 0 ? totalOvers : 'N/A'})
           </p>
         </div>
@@ -105,7 +105,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
       
        {status === 'In Progress' && (
         <>
-            <div className="mt-6 pt-4 border-t border-medium-gray dark:border-gray-700 flex justify-around text-center">
+            <div className="mt-4 sm:mt-6 pt-4 border-t border-medium-gray dark:border-gray-700 flex flex-col sm:flex-row justify-around text-center gap-4 sm:gap-0">
                 <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.batting')}</p>
                     <p className="font-bold text-lg text-dark-gray dark:text-gray-200">{battingTeamData.name}</p>
@@ -119,7 +119,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
                     <p className="font-bold text-lg text-classic-blue">{targetScore}</p>
                 </div>}
             </div>
-             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-around text-center">
+             <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-around text-center gap-4 sm:gap-0">
                  <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.striker')}</p>
                     <p className="font-bold text-md text-dark-gray dark:text-gray-200">{striker ? formatPlayerName(striker) : 'N/A'}*</p>

@@ -147,6 +147,7 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     }
 
     if (wicketType) {
+        console.log('Wicket:', { wicketType, batsmanOutId, strikerId, nonStrikerId });
         currentBattingTeam.wickets += 1;
         eventDescription = `W`;
         const outPlayerId = batsmanOutId || strikerId;

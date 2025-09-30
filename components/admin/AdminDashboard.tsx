@@ -57,7 +57,7 @@ const AdminDashboard: React.FC = () => {
     const NavButton: React.FC<{ viewName: AdminView; label: string; icon: React.ReactNode }> = ({ viewName, label, icon }) => (
         <button
             onClick={() => setActiveView(viewName)}
-            className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors duration-200 ${
+            className={`flex-shrink-0 w-full flex items-center space-x-2 p-3 rounded-lg text-left transition-colors duration-200 ${
                 activeView === viewName
                     ? 'bg-classic-green text-white shadow-md'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
             aria-selected={activeView === viewName}
         >
             <span className="w-6 h-6">{icon}</span>
-            <span className="font-semibold">{label}</span>
+            <span className="font-semibold hidden sm:inline">{label}</span>
         </button>
     );
 
@@ -101,14 +101,14 @@ const AdminDashboard: React.FC = () => {
         <div className="min-h-screen flex flex-col">
             <Header showLogout={true} />
             <main className="container mx-auto p-4 md:p-8 flex-grow">
-                <h2 className="text-3xl font-bold text-dark-gray dark:text-gray-200 mb-6">Admin Dashboard</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-dark-gray dark:text-gray-200 mb-6">Admin Dashboard</h2>
                 <Scoreboard match={match} />
 
                 <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Left Navigation Panel */}
                     <aside className="lg:col-span-1">
                         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md border border-medium-gray dark:border-gray-700">
-                            <nav className="space-y-2">
+                            <nav className="flex flex-row lg:flex-col lg:space-y-2 overflow-x-auto -mx-4 px-4 pb-2 lg:pb-0">
                                 <NavButton viewName="scoring" label="Live Scoring" icon={<ScoreIcon />} />
                                 <NavButton viewName="setup" label="Match Setup" icon={<SetupIcon />} />
                                 <NavButton viewName="controls" label="Match Controls" icon={<ControlsIcon />} />
