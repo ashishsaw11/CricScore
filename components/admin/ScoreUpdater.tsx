@@ -433,6 +433,7 @@ const ScoreUpdater: React.FC = () => {
                 </button>
             </div>
          </div>
+    );
     const finalContent = wrapWithOverlay(content);
 
     return (
