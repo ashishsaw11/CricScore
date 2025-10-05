@@ -132,6 +132,7 @@ const App: React.FC = () => {
     setIsLoggedIn(true);
     setUserRole('viewer');
     setViewerDetails({ name });
+    try { localStorage.setItem('viewerName', name); } catch {}
     client.login({ role: 'viewer', details: { name } });
   };
   
@@ -150,6 +151,19 @@ const App: React.FC = () => {
     setIsHistoryModalOpen(prev => !prev);
   }, []);
 
+
+  useEffect(()=>{
+    if(!isLoggedIn){
+      try {
+        const saved = localStorage.getItem('viewerName');
+        if(saved){
+          // auto login silently as viewer
+          handleViewerLogin(saved);
+        }
+      } catch {}
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   const renderAppContent = () => {
     if (!isLoggedIn) {

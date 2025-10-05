@@ -51,8 +51,16 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                 </td>
                 <td className="py-3 px-4 text-gray-600 dark:text-gray-400 text-left">{status}</td>
                 <td className="py-3 px-4 text-center font-bold text-dark-gray dark:text-white">{player.runs}</td>
+                <td className="py-3 px-4 text-center">{player.fours}</td>
+                <td className="py-3 px-4 text-center">{player.sixes}</td>
+                <td className="py-3 px-4 text-center">{player.singles}</td>
                 <td className="py-3 px-4 text-center">{player.ballsFaced}</td>
-                <td className="py-3 px-4 text-center">{calculateSR(player.runs, player.ballsFaced)}</td>
+                <td className="py-3 px-4 text-center">
+                    <span className={`${player.ballsFaced >= 10 && (player.runs / player.ballsFaced) *100 >= 150 ? 'text-green-600 dark:text-green-400 font-semibold' : ''}`}>{calculateSR(player.runs, player.ballsFaced)}</span>
+                </td>
+                <td className="py-3 px-4 text-center">
+                    {player.ballsFaced > 0 ? (((player.fours*4 + player.sixes*6)/player.runs)*100).toFixed(0) + '%' : '—'}
+                </td>
             </tr>
         );
     };
@@ -73,8 +81,12 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                                     <th className="py-2 px-4 text-left font-semibold">{t('playerStats.batsman')}</th>
                                     <th className="py-2 px-4 text-left font-semibold">{t('playerStats.status')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.runs')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">4s</th>
+                                    <th className="py-2 px-4 text-center font-semibold">6s</th>
+                                    <th className="py-2 px-4 text-center font-semibold">1s</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.balls')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.strikeRate')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">Bound%</th>
                                 </tr>
                            </thead>
                             <tbody>
@@ -95,6 +107,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.overs')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.runs')}</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.wickets')}</th>
+                                    <th className="py-2 px-4 text-center font-semibold">M</th>
                                     <th className="py-2 px-4 text-center font-semibold">{t('playerStats.economy')}</th>
                                 </tr>
                            </thead>
@@ -107,6 +120,7 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                                         <td className="text-center">{p.oversBowled}.{p.ballsBowled}</td>
                                         <td className="text-center">{p.runsConceded}</td>
                                         <td className="text-center font-bold text-dark-gray dark:text-white">{p.wicketsTaken}</td>
+                                        <td className="text-center">{p.maidens || 0}</td>
                                         <td className="text-center">{calculateEcon(p.runsConceded, p.oversBowled, p.ballsBowled)}</td>
                                     </tr>
                             )) : (
@@ -125,14 +139,18 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                 <h3 className="text-lg sm:text-xl font-bold text-dark-gray dark:text-gray-200 mb-4">{t('playerStats.thisOver')}</h3>
                 {currentOverHistory.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {currentOverHistory.map((event, i) => {
-                      const isWicket = event.startsWith('W');
-                      const isFour = event.includes('4');
-                      const isSix = event.includes('6');
-                      let bgColor = 'bg-gray-200 dark:bg-gray-600 text-dark-gray dark:text-gray-200';
-                      if (isWicket) bgColor = 'bg-classic-red text-white';
-                      else if (isFour) bgColor = 'bg-classic-blue text-white';
-                      else if (isSix) bgColor = 'bg-dark-green text-white';
+                                        {currentOverHistory.map((event, i) => {
+                                            const isWicket = event === 'W';
+                                            const isWide = event === 'wd';
+                                            const isNoBall = event === 'nb';
+                                            const isFour = event.includes('4');
+                                            const isSix = event.includes('6');
+                                            let bgColor = 'bg-gray-200 dark:bg-gray-600 text-dark-gray dark:text-gray-200';
+                                            if (isWicket) bgColor = 'bg-classic-red text-white';
+                                            else if (isWide) bgColor = 'bg-yellow-400 text-black dark:text-gray-900';
+                                            else if (isNoBall) bgColor = 'bg-amber-500 text-white';
+                                            else if (isFour) bgColor = 'bg-classic-blue text-white';
+                                            else if (isSix) bgColor = 'bg-dark-green text-white';
 
                       return (
                         <span 
@@ -147,7 +165,21 @@ const PlayerStatsView: React.FC<{ match: MatchState }> = ({ match }) => {
                 ) : (
                   <p className="text-gray-500 dark:text-gray-400">{t('playerStats.waitingForFirstBall')}</p>
                 )}
-              </div>
+                            </div>
+                            <div className="mt-4">
+                                {(() => {
+                                    const ballsBowled = currentOverHistory.filter(e => e !== 'wd' && e !== 'nb' && e !== 'DB').length;
+                                    const placeholders = Array.from({length: 6}).map((_,i)=> currentOverHistory[i] || '');
+                                    return (
+                                        <div className="flex gap-2">
+                                            {placeholders.map((val,i)=>{
+                                                const filled = i < ballsBowled;
+                                                return <span key={i} className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold border ${filled ? 'border-transparent' : 'border-dashed border-gray-400 dark:border-gray-600'} bg-${val? 'white/0':'transparent'}`}>{val ? '' : (i+1)}</span>;
+                                            })}
+                                        </div>
+                                    );
+                                })()}
+                            </div>
         </div>
     );
 };

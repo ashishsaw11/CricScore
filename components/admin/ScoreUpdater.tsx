@@ -12,7 +12,7 @@ const AddPlayerInput: React.FC<{
 
   const handleAddPlayer = () => {
     if (playerName.trim()) {
-      client.addPlayer({ team, playerName: playerName.trim(), nickname: playerNickname.trim() });
+    client.addPlayer({ team, playerName: playerName.trim(), nickname: playerNickname.trim() || undefined });
       setPlayerName('');
       setPlayerNickname('');
     }
@@ -366,6 +366,11 @@ const ScoreUpdater: React.FC = () => {
                 <h4 className="font-bold mb-1">This Over:</h4>
                 <div className="flex flex-wrap gap-2">
                     {currentOverHistory.map((event, i) => <span key={i} className="bg-white dark:bg-gray-800 border text-sm px-2 py-1 rounded-full">{event}</span>)}
+                </div>
+                <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 flex flex-wrap gap-4">
+                    <span><span className="font-semibold text-classic-red">W</span> = Wicket</span>
+                    <span><span className="font-semibold text-yellow-500">wd</span> = Wide</span>
+                    <span><span className="font-semibold text-amber-500">nb</span> = No-ball</span>
                 </div>
             </div>
 

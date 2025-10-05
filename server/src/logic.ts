@@ -48,6 +48,7 @@ export const getInitialState = (): AppState => {
             // FIX: Initialize commentary fields.
             liveCommentary: '',
             commentaryHistory: [],
+            currentBowlerRunsThisOver: 0,
         },
     };
 };
@@ -55,7 +56,17 @@ export const getInitialState = (): AppState => {
 export const setupMatch = (state: AppState, payload: { teamAName: string; teamBName: string; scheduledTime: string; teamAPlayers: Player[]; teamBPlayers: Player[] }): AppState => {
     const { teamAName, teamBName, scheduledTime, teamAPlayers = [], teamBPlayers = [] } = payload;
     const mapToPlayerStats = (players: Player[]): PlayerStats[] => players.map(p => ({
-        ...p, runs: 0, ballsFaced: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
+        ...p,
+        runs: 0,
+        ballsFaced: 0,
+        fours: 0,
+        sixes: 0,
+        singles: 0,
+        isOut: false,
+        oversBowled: 0,
+        ballsBowled: 0,
+        runsConceded: 0,
+        wicketsTaken: 0,
     }));
     state.match = {
         ...getInitialState().match,
@@ -88,7 +99,19 @@ export const addPlayer = (state: AppState, payload: { team: 'teamA' | 'teamB'; p
     const targetTeam = state.match[team];
     const maxId = Math.max(0, ...state.match.teamA.players.map((p: PlayerStats) => p.id), ...state.match.teamB.players.map((p: PlayerStats) => p.id));
     const newPlayer: PlayerStats = {
-        id: maxId + 1, name: playerName, nickname: nickname, runs: 0, ballsFaced: 0, isOut: false, oversBowled: 0, ballsBowled: 0, runsConceded: 0, wicketsTaken: 0,
+        id: maxId + 1,
+        name: playerName,
+        nickname: nickname,
+        runs: 0,
+        ballsFaced: 0,
+        fours: 0,
+        sixes: 0,
+        singles: 0,
+        isOut: false,
+        oversBowled: 0,
+        ballsBowled: 0,
+        runsConceded: 0,
+        wicketsTaken: 0,
     };
     targetTeam.players.push(newPlayer);
     return state;
@@ -126,8 +149,9 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     let eventDescription = '';
       
     if (extra) {
-        if (extra === 'wide' || extra === 'noball') { scoreToAdd += 1; isBallValid = false; eventDescription = `${extra.charAt(0).toUpperCase()}`; }
-        if (extra === 'deadball') { isBallValid = false; eventDescription = 'DB'; }
+        if (extra === 'wide') { scoreToAdd += 1; isBallValid = false; eventDescription = 'wd'; }
+        else if (extra === 'noball') { scoreToAdd += 1; isBallValid = false; eventDescription = 'nb'; }
+        else if (extra === 'deadball') { isBallValid = false; eventDescription = 'DB'; }
     }
     if (runs > 0) { eventDescription += eventDescription ? `+${runs}` : `${runs}`; } 
     else if (!extra && !wicketType) { eventDescription = '0'; }
@@ -165,18 +189,41 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
     }
       
     currentBattingTeam.players.forEach((p: PlayerStats) => {
+        // Backward compatibility: ensure new stats fields exist
+        if (p.fours === undefined) p.fours = 0;
+        if (p.sixes === undefined) p.sixes = 0;
+        if (p.singles === undefined) p.singles = 0;
         if (p.id === strikerId && !wicketType) {
-            if (extra !== 'wide') { p.runs += runs; }
+            if (extra !== 'wide') {
+                p.runs += runs;
+                if (runs === 4) p.fours += 1;
+                else if (runs === 6) p.sixes += 1;
+                else if (runs === 1) p.singles += 1;
+            }
             if (isBallValid) { p.ballsFaced += 1; }
         }
     });
     currentBowlingTeam.players.forEach((p: PlayerStats) => {
         if (p.id === bowlerId) {
+            if (p.maidens === undefined) p.maidens = 0;
             p.runsConceded += scoreToAdd;
             if (wicketType && wicketType !== 'run out') { p.wicketsTaken += 1; }
             if (isBallValid) {
                 p.ballsBowled += 1;
-                if (p.ballsBowled === 6) { p.ballsBowled = 0; p.oversBowled += 1; }
+                if (p.ballsBowled === 1 && match.currentBowlerRunsThisOver === undefined) {
+                    match.currentBowlerRunsThisOver = 0;
+                }
+                if (scoreToAdd > 0) {
+                    match.currentBowlerRunsThisOver = (match.currentBowlerRunsThisOver || 0) + scoreToAdd;
+                }
+                if (p.ballsBowled === 6) {
+                    p.ballsBowled = 0; p.oversBowled += 1;
+                    const overRuns = match.currentBowlerRunsThisOver || 0;
+                    if (overRuns === 0) { p.maidens += 1; }
+                    match.currentBowlerRunsThisOver = 0;
+                    bowlerId = null; // force selection of new bowler
+                    match.currentOverHistory = [];
+                }
             }
         }
     });

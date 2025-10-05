@@ -4,6 +4,7 @@ import Header from '../Header';
 import Scoreboard from '../Scoreboard';
 import { MatchStatus } from '../../types';
 import PlayerStatsView from '../common/PlayerStatsView';
+import ConfettiOverlay from '../common/ConfettiOverlay';
 import { useLanguage } from '../LanguageContext';
 
 const EmailIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -24,6 +25,7 @@ const ViewerScoreboard: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+            <ConfettiOverlay match={match} />
       <Header showLogout={true} />
       <main className="container mx-auto p-4 md:p-8 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

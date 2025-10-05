@@ -130,7 +130,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
                 </div>
                  <div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('scoreboard.bowler')}</p>
-                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{bowler ? formatPlayerName(bowler) : 'N/A'}</p>
+                    <p className="font-bold text-md text-dark-gray dark:text-gray-200">{bowler ? `${formatPlayerName(bowler)} ${bowler.oversBowled}.${bowler.ballsBowled} (${bowler.wicketsTaken}/${bowler.runsConceded}) M:${bowler.maidens || 0}` : 'N/A'}</p>
                 </div>
             </div>
         </>

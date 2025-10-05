@@ -30,12 +30,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onAdminLogin, onViewerLogin }
 
   const handleViewerJoin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (viewerName.trim()) {
-      setViewerError('');
-      onViewerLogin(viewerName.trim());
-    } else {
-      setViewerError('Please enter your name.');
+    let nameToUse = viewerName.trim();
+    if (!nameToUse) {
+      // Auto assign a generic viewer name with a short id
+      nameToUse = 'Viewer-' + Math.random().toString(36).substring(2, 6).toUpperCase();
     }
+    setViewerError('');
+    onViewerLogin(nameToUse);
   };
 
   return (
@@ -74,9 +75,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onAdminLogin, onViewerLogin }
                   />
                 </div>
                 {viewerError && <p className="text-red-500 text-sm text-center">{viewerError}</p>}
-                <button type="submit" className="w-full bg-classic-green text-white font-bold py-3 rounded-md hover:bg-dark-green transition-all duration-300">
-                  Watch Live
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button type="submit" className="flex-1 bg-classic-green text-white font-bold py-3 rounded-md hover:bg-dark-green transition-all duration-300">
+                    Watch Live
+                  </button>
+                  <button type="button" onClick={(e) => { e.preventDefault(); setViewerName(''); setViewerError(''); onViewerLogin('Viewer'); }} className="flex-1 bg-classic-blue text-white font-bold py-3 rounded-md hover:bg-blue-700 transition-all duration-300">
+                    Quick Join
+                  </button>
+                </div>
               </form>
             ) : (
               <form onSubmit={handleAdminLogin} className="space-y-6">

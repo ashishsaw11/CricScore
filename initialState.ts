@@ -1,16 +1,15 @@
 import { AppState, MatchStatus, Team } from './types';
 
+// Keep only team-level initial state (player objects are created on server and synced)
 const initialTeamState: Omit<Team, 'name' | 'players'> = {
-  score: 0,
-  wickets: 0,
-  overs: 0,
-  balls: 0,
+    score: 0,
+    wickets: 0,
+    overs: 0,
+    balls: 0,
 };
 
 export const getInitialState = (): AppState => {
-    // Check for theme in local storage to provide persistence
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-
+    const savedTheme = (typeof window !== 'undefined') ? localStorage.getItem('theme') as 'light' | 'dark' | null : null;
     return {
         viewerCount: 0,
         theme: savedTheme || 'light',
@@ -33,7 +32,6 @@ export const getInitialState = (): AppState => {
             currentInning: 1,
             resultMessage: null,
             isPaused: false,
-            // FIX: Initialize commentary and action history fields to match server state.
             liveCommentary: '',
             commentaryHistory: [],
             actionHistory: [],

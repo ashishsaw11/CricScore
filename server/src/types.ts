@@ -8,12 +8,16 @@ export interface PlayerStats extends Player {
     // Batting stats
     runs: number;
     ballsFaced: number;
+  fours: number; // number of 4s hit
+  sixes: number; // number of 6s hit
+  singles: number; // number of singles (1 run) taken
     isOut: boolean;
     // Bowling stats
     oversBowled: number;
     ballsBowled: number;
     runsConceded: number;
     wicketsTaken: number;
+  maidens?: number; // maiden overs bowled
 }
 
 
@@ -64,6 +68,8 @@ export interface MatchState {
   // FIX: Add commentary fields for the live commentary feature.
   liveCommentary?: string;
   commentaryHistory?: string[];
+  // Track current bowler's runs in this over for maiden detection
+  currentBowlerRunsThisOver?: number;
 }
 
 export type UserRole = 'admin' | 'viewer' | null;
