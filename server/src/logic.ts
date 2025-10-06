@@ -153,20 +153,24 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
         else if (extra === 'noball') { scoreToAdd += 1; isBallValid = false; eventDescription = 'nb'; }
         else if (extra === 'deadball') { isBallValid = false; eventDescription = 'DB'; }
     }
-    if (runs > 0) { eventDescription += eventDescription ? `+${runs}` : `${runs}`; } 
+    if (runs > 0) { eventDescription += eventDescription ? `+${runs}` : `${runs}`; }
     else if (!extra && !wicketType) { eventDescription = '0'; }
     currentBattingTeam.score += scoreToAdd;
-      
+
+    // If it's a valid ball and the start of a new over, clear the history.
+    if (isBallValid && currentBattingTeam.balls === 0) {
+        match.currentOverHistory = [];
+    }
+
     let overJustEnded = false;
     if (isBallValid) {
         currentBattingTeam.balls += 1;
-        if (currentBattingTeam.balls === 6) {
+        if (currentBattingTeam.balls >= 6) { // Use >= to be safe
             currentBattingTeam.balls = 0;
             currentBattingTeam.overs += 1;
             [strikerId, nonStrikerId] = [nonStrikerId, strikerId];
             overJustEnded = true;
             bowlerId = null; // New bowler needed
-            match.currentOverHistory = []; // Clear history for new over
         }
     }
 
@@ -177,6 +181,12 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
         const outPlayerId = batsmanOutId || strikerId;
         currentBattingTeam.players.forEach((p: PlayerStats) => { if(p.id === outPlayerId) p.isOut = true; });
 
+        if (wicketType !== 'run out') {
+            currentBowlingTeam.players.forEach((p: PlayerStats) => {
+                if (p.id === bowlerId) p.wicketsTaken += 1;
+            });
+        }
+
         if (outPlayerId === strikerId) {
             strikerId = null;
         } else {
@@ -184,9 +194,7 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
         }
     }
 
-    if(!overJustEnded) {
-        match.currentOverHistory.push(eventDescription);
-    }
+    match.currentOverHistory.push(eventDescription);
       
     currentBattingTeam.players.forEach((p: PlayerStats) => {
         // Backward compatibility: ensure new stats fields exist
@@ -203,26 +211,26 @@ export const recordBall = (state: AppState, payload: { runs: number; extra?: Ext
             if (isBallValid) { p.ballsFaced += 1; }
         }
     });
+
     currentBowlingTeam.players.forEach((p: PlayerStats) => {
         if (p.id === bowlerId) {
             if (p.maidens === undefined) p.maidens = 0;
             p.runsConceded += scoreToAdd;
-            if (wicketType && wicketType !== 'run out') { p.wicketsTaken += 1; }
             if (isBallValid) {
                 p.ballsBowled += 1;
-                if (p.ballsBowled === 1 && match.currentBowlerRunsThisOver === undefined) {
+                if (match.currentBowlerRunsThisOver === undefined) {
                     match.currentBowlerRunsThisOver = 0;
                 }
                 if (scoreToAdd > 0) {
                     match.currentBowlerRunsThisOver = (match.currentBowlerRunsThisOver || 0) + scoreToAdd;
                 }
-                if (p.ballsBowled === 6) {
-                    p.ballsBowled = 0; p.oversBowled += 1;
-                    const overRuns = match.currentBowlerRunsThisOver || 0;
-                    if (overRuns === 0) { p.maidens += 1; }
+                if (p.ballsBowled >= 6) {
+                    p.oversBowled += 1;
+                    p.ballsBowled = 0;
+                    if ((match.currentBowlerRunsThisOver || 0) === 0) {
+                        p.maidens += 1;
+                    }
                     match.currentBowlerRunsThisOver = 0;
-                    bowlerId = null; // force selection of new bowler
-                    match.currentOverHistory = [];
                 }
             }
         }
