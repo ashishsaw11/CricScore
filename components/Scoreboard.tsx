@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Confetti from 'react-confetti';
 import { MatchState, MatchStatus, PlayerStats } from '../types';
 import { useLanguage } from './LanguageContext';
 
 interface ScoreboardProps {
   match: MatchState;
 }
+
+const usePrevious = <T,>(value: T) => {
+  const ref = useRef<T>();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
 
 const formatPlayerName = (player: PlayerStats) => {
     if (player.nickname) {
@@ -16,6 +25,26 @@ const formatPlayerName = (player: PlayerStats) => {
 const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
   const { t } = useLanguage();
   const { teamA, teamB, battingTeam, status, scheduledTime, tossWinner, choseTo, totalOvers, strikerId, nonStrikerId, bowlerId, targetScore, currentInning, resultMessage, isPaused } = match;
+
+  const [showConfetti, setShowConfetti] = useState(false);
+  const prevMatchState = usePrevious(match);
+
+  useEffect(() => {
+    if (prevMatchState) {
+      const battingTeamData = battingTeam === 'teamA' ? teamA : teamB;
+      const prevBattingTeamData = battingTeam === 'teamA' ? prevMatchState.teamA : prevMatchState.teamB;
+
+      const scoreDiff = battingTeamData.score - prevBattingTeamData.score;
+      const wicketsDiff = battingTeamData.wickets - prevBattingTeamData.wickets;
+
+      if (scoreDiff === 4 || scoreDiff === 6 || wicketsDiff > 0) {
+        setShowConfetti(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 3000);
+      }
+    }
+  }, [match]);
 
   const battingTeamData = battingTeam === 'teamA' ? teamA : teamB;
   const bowlingTeamData = battingTeam === 'teamA' ? teamB : teamA;
@@ -70,6 +99,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ match }) => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-2 sm:p-4 border border-medium-gray dark:border-gray-700">
+      {showConfetti && <Confetti />}
       <div className="text-center mb-2 sm:mb-4">
         <p className={`font-bold text-sm sm:text-base ${color}`}>{message}</p>
       </div>
