@@ -1,4 +1,3 @@
-import { WebSocketServer } from 'ws';
 import { WebSocketServer, WebSocket } from 'ws';
 import http from 'http';
 import { ObjectId } from 'mongodb';
@@ -8,8 +7,6 @@ import { fileURLToPath } from 'url';
 import { getInitialState, setupMatch, startMatch, addPlayer, updatePlayerSelection, recordBall, switchSides, endMatch, resetMatch, toggleTheme, togglePauseMatch, suspendMatch, resumeMatch, loadMatch, clearMatchHistory } from './logic.js';
 import { connectDB, getDB } from './db.js';
 import { AppState, MatchState } from './types.js';
-
-import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '../../.env') });
