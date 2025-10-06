@@ -1,6 +1,6 @@
+import { WebSocketServer } from 'ws';
 import { WebSocketServer, WebSocket } from 'ws';
 import http from 'http';
-import dotenv from 'dotenv';
 import { ObjectId } from 'mongodb';
 import express from 'express';
 import path from 'path';
@@ -9,13 +9,12 @@ import { getInitialState, setupMatch, startMatch, addPlayer, updatePlayerSelecti
 import { connectDB, getDB } from './db.js';
 import { AppState, MatchState } from './types.js';
 
-dotenv.config();
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import dotenv from 'dotenv';
+dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 const PORT = process.env.PORT || 8080;
-
-// Helper for ES module __dirname. This will be the 'dist' directory when run.
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // --- Express App Setup ---
 const app = express();

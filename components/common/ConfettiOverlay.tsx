@@ -16,7 +16,7 @@ const ConfettiOverlay: React.FC<Props> = ({ match }) => {
       setBursts(b=>[...b,{id,created:id,type:last.includes('W')?'wicket': last.includes('6')?'six':'four'}]);
       const timeout = setTimeout(()=>{
         setBursts(b=> b.filter(x=> x.id!==id));
-      }, 3500);
+      }, 4000); // Increased to 4s to match animation duration
       return ()=> clearTimeout(timeout);
     }
   },[match.currentOverHistory]);
