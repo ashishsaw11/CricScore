@@ -10,9 +10,9 @@ import { AppState, MatchState } from './types.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
-// ESM-compliant alternative to __dirname
-const __dirname = dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: join(__dirname, '../../.env') });
+// ESM-compliant alternative to __dirname.
+const currentDir = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: join(currentDir, '../../.env') });
 
 const PORT = process.env.PORT || 8080;
 
@@ -36,7 +36,7 @@ wss.on('close', function close() {
 });
 
 // Serve all static assets (index.html, bundle.js) from the 'dist' directory.
-app.use(express.static(__dirname));
+app.use(express.static(currentDir));
 
 
 interface UserWebSocket extends WebSocket {
@@ -296,7 +296,7 @@ wss.on('connection', (ws: WebSocket) => {
 // Add a catch-all route to serve the index.html for any non-asset requests.
 // This is crucial for single-page applications and fixes the "Not Found" error.
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(currentDir, 'index.html'));
 });
 
 
