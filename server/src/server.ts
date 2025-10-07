@@ -10,7 +10,9 @@ import { AppState, MatchState } from './types.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
-dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), '../../.env') });
+// ESM-compliant alternative to __dirname
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: join(__dirname, '../../.env') });
 
 const PORT = process.env.PORT || 8080;
 
